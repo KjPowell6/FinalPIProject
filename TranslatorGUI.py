@@ -18,7 +18,7 @@ class App(Frame):
 
         # setup the text to the right of the GUI
         # first, the frame in which the text will be placed
-        text_frame = Frame(self, width=600 // 2)
+        text_frame = Frame(self, width=800 // 2)
         # the widget is a Tkinter Text
         # disable it by default
         # don't let the widget control the frame's size
@@ -28,18 +28,18 @@ class App(Frame):
         text_frame.pack_propagate(False)
 
         # setup the text to the left of the GUI
-        text_frame1 = Frame(self, width=600 // 2)
+        text_frame1 = Frame(self, width=800 // 2)
         self.text1 = Text(text_frame1, bg="light sky blue", font=14, state=DISABLED)
         self.text1.pack(fill=Y, expand=1)
         text_frame1.pack(side=LEFT, fill=Y)
         text_frame1.pack_propagate(False)
         # give the user some instructions for use
         self.text1.config(state=NORMAL)
-        self.text1.insert(END, "Type the phrase you would like to\ntranslate then press enter/return to see the translation." +
-                          "\n\n\n\nUse the quiz button to test yourself on \nthe translations you've entered." +
-                          "\n\n\n\nUse the learn button to review the \ntranslations in a flashcard style." +
-                          "\n\n\n\nUse the dropdown menu to select the \nlanguage you'd like to translate your \nphrase to." +
-                          "\n\n\n\nUse the clear button to erase the \ntranslations you've entered")
+        self.text1.insert(END, "Type the phrase you would like to translate\nthen press enter/return to see the translation." +
+                          "\n\nUse the quiz button to test yourself on \nthe translations you've entered." +
+                          "\n\nUse the learn button to review the \ntranslations in a flashcard style." +
+                          "\n\nUse the dropdown menu to select the \nlanguage you'd like to translate your \nphrase to." +
+                          "\n\nUse the clear button to erase the \ntranslations you've entered")
         self.text1.config(state=DISABLED)
 
         # setup the buttons that will be used for quiz mode, learn mode, selecting the language, and clearing the screen
@@ -105,7 +105,7 @@ class App(Frame):
             # create the new window
             self.quizWindow = Tk()
             self.quizWindow.title("Quiz")
-            self.quizWindow.geometry("160x20")
+            self.quizWindow.geometry("195x20")
             self.quizWindow.configure(bg="red")
             self.quizFrame = Frame(self.quizWindow, width=200)
             self.quizLabel = Label(self.quizFrame, bg="red", text="There are no phrases to learn")
@@ -156,7 +156,7 @@ class App(Frame):
         elif len(self.numbers) == 0 and (userAnswer == questionAnswer):
             self.questionText.config(state=NORMAL)
             self.questionText.delete('1.0', END)
-            self.questionText.insert(END, "You have successfully translated all the \nphrases! \n\nYou can close this window to exit.")
+            self.questionText.insert(END, "You have successfully translated all \nthe phrases! \n\nYou can close this window to exit.")
             self.questionText.config(state=DISABLED)
             self.quizInput.destroy()
         # if they answer incorrectly, the question doesn't change
@@ -177,7 +177,7 @@ class App(Frame):
             # create the new window
             self.learnWindow = Tk()
             self.learnWindow.title("Learn")
-            self.learnWindow.geometry("160x20")
+            self.learnWindow.geometry("195x20")
             self.learnWindow.configure(bg="red")
             self.learnFrame = Frame(self.learnWindow, width=200)
             self.learnLabel = Label(self.learnFrame, bg="red", text="There are no phrases to learn")
@@ -222,7 +222,7 @@ class App(Frame):
             self.buttonText = "Show Translation"
             self.learnText.config(state=NORMAL)
             self.learnText.delete('1.0', END)
-            self.learnText.insert(END, "You have reviewed all the phrases." + "\nPress the exit button to close the window")
+            self.learnText.insert(END, "You have reviewed all the phrases." + "\nPress the exit button to close the \nwindow")
             self.learnText.config(state=DISABLED)
             self.card = 0
 
@@ -231,7 +231,7 @@ class App(Frame):
 ######################################################
 window = Tk()
 window.title("Translator")
-window.geometry("600x600")
+window.geometry("800x800")
 t = App(window)
 window.configure(bg="white")
 window.mainloop()
