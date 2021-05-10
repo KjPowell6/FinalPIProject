@@ -2,7 +2,9 @@ from tkinter import *
 from mtranslate import translate
 from random import randint
 from random import choice
-
+import speech_recognition as sr
+import pyaudio
+import wave
 # create the entire class
 class App(Frame):
     def __init__(self, master):
@@ -45,6 +47,9 @@ class App(Frame):
         # setup the buttons that will be used for quiz mode, learn mode, selecting the language, and clearing the screen
         quiz = Button(text="Quiz", bg="orchid1", padx=50, command=lambda : self.quiz())
         quiz.pack(side=LEFT)
+        # give user option to use a microphone
+        microphone = Button(text="Micophone", bg="orchid1", padx=50, command=lambda : self.microphone())
+        microphone.pack(side=LEFT)
         # deletes the users previous translations
         clear = Button(text="Clear", bg="orchid1", padx=50, command=lambda : self.clear())
         clear.pack(side=RIGHT)
@@ -64,7 +69,54 @@ class App(Frame):
     # or take quizzes
     phrases = []
     translatedPhrase = []
+   
+    def microphone(self):
+        form_1 = pyaudio.paInt16  # 16-bit resolution
+        chans = 1  # 1 channel
+        samp_rate = 44100  # 44.1kHz sampling rate
+        chunk = 4096  # 2^12 samples for buffer
+        record_secs = 3  # seconds to record
+        dev_index = 0  # device index found by p.get_device_info_by_index(ii)
+        wav_output_filename = 'test1.wav'  # name of .wav file
 
+        audio = pyaudio.PyAudio()  # create pyaudio instantiation
+
+        # create pyaudio stream
+        stream = audio.open(format=form_1, rate=samp_rate, channels=chans, input_device_index=dev_index, input=True,
+                            frames_per_buffer=chunk)
+        print("recording")
+        frames = []
+
+        # loop through stream and append audio chunks to frame array
+        for ii in range(0, int((samp_rate / chunk) * record_secs)):
+            data = stream.read(chunk)
+            frames.append(data)
+
+        print("finished recording")
+
+        # stop the stream, close it, and terminate the pyaudio instantiation
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
+
+        # save the audio frames as .wav file
+        wavefile = wave.open(wav_output_filename, 'wb')
+        wavefile.setnchannels(chans)
+        wavefile.setsampwidth(audio.get_sample_size(form_1))
+        wavefile.setframerate(samp_rate)
+        wavefile.writeframes(b''.join(frames))
+        wavefile.close()
+        # make wavefile equal filename to convert to speech
+        filename = 'test1.wav'
+        # initialize the recognizer
+        r = sr.Recognizer()
+        # open the file
+        with sr.AudioFile(filename) as source:
+            # listen for the data (load audio to memory)
+            audio_data = r.record(source)
+            # recognize (convert from speech to text)
+            text = r.recognize_google(audio_data)
+        self.user_input = text
     # translate phrases and save them to respective lists
     def translation(self,ph):
         # get the language the user wants to translate to
