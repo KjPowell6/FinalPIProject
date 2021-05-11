@@ -1,49 +1,31 @@
 import speech_recognition as sr
-import pyaudio
-import wave
+def speech_recog():
+    # recognizer class
+    r = sr.Recognizer()
+    # Specifing the microphone to be activated
+    mic = sr.Microphone(device_index=1)
 
-form_1 = pyaudio.paInt16 # 16-bit resolution
-chans = 1 # 1 channel
-samp_rate = 44100 # 44.1kHz sampling rate
-chunk = 4096 # 2^12 samples for buffer
-record_secs = 3 # seconds to record
-dev_index = 0 # device index found by p.get_device_info_by_index(ii)
-wav_output_filename = 'test1.wav' # name of .wav file
+    # listening to the user
+    with mic as s:
+        audio = r.listen(s, timeout=5)
+        r.adjust_for_ambient_noise(s)
 
-audio = pyaudio.PyAudio() # create pyaudio instantiation
+    # Converting the audio to text
+    try:
+        """I use google engine to convert the speech 
+         text but you may use other engines such as 
+         sphinx,IBM speech to text etc."""
+        speech = r.recognize_google(audio)
+        return speech
 
-# create pyaudio stream
-stream = audio.open(format = form_1,rate = samp_rate,channels = chans, input_device_index = dev_index,input = True, frames_per_buffer=chunk)
-print("recording")
-frames = []
+    """When engine couldn't recognize the speech 
+    throws this"""
+    except sr.UnknownValueError:
+    # calling the text to speech function
+    print("couldn't hear")
 
-# loop through stream and append audio chunks to frame array
-for ii in range(0,int((samp_rate/chunk)*record_secs)):
-    data = stream.read(chunk)
-    frames.append(data)
 
-print("finished recording")
-
-# stop the stream, close it, and terminate the pyaudio instantiation
-stream.stop_stream()
-stream.close()
-audio.terminate()
-
-# save the audio frames as .wav file
-wavefile = wave.open(wav_output_filename,'wb')
-wavefile.setnchannels(chans)
-wavefile.setsampwidth(audio.get_sample_size(form_1))
-wavefile.setframerate(samp_rate)
-wavefile.writeframes(b''.join(frames))
-wavefile.close()
-# make wavefile equal filename to convert to speech
-filename = wavefile
-# initialize the recognizer
-r = sr.Recognizer()
-# open the file
-with sr.AudioFile(filename) as source:
-    # listen for the data (load audio to memory)
-    audio_data = r.record(source)
-    # recognize (convert from speech to text)
-    text = r.recognize_google(audio_data)
-    print(text)
+"""This error shows up when the microphone cant 
+pick up any speech"""
+except sr.WaitTimeoutError as e:\
+    print("please try again")
